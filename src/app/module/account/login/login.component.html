@@ -1,0 +1,36 @@
+<body>
+<div class="container">
+  <div class="frame">
+    <div class="nav text-center d-inline-block">
+      <p class="signin-active"><a class="btn">Đăng Nhập</a></p>
+    </div>
+    <div>
+      <form class="form-signin" [formGroup]="form" (ngSubmit)="login()">
+        <div class="mb-4">
+          <label for="username" class="text-warning">Tên đăng nhập</label>
+          <input id="username" class="form-styling mb-1" type="text" formControlName="username" placeholder="hãy nhập tên đăng nhập"/>
+          <small *ngIf="form.get('username')?.hasError('required')
+                        && (form.get('username')?.pristine || form.get('username')?.dirty)" class="text-danger ml-2 d-block">
+            * Yêu cầu nhập tên đăng nhập.</small>
+          <small *ngIf="checkLogin" class="text-danger ml-2 d-block">* Tên đăng nhập hoặc mật khẩu chưa đúng.</small>
+        </div>
+        <div class="mb-4">
+          <label for="password" class="text-warning">Mật khẩu</label>
+          <input id="password" class="form-styling mb-1" type="password" formControlName="password" placeholder="nhập mật khẩu"/>
+          <small *ngIf="form.get('password')?.hasError('required')
+                        && (form.get('password')?.pristine || form.get('password')?.dirty)" class="text-danger ml-2 d-block">
+            * yêu cầu nhập mật khẩu</small>
+          <small *ngIf="checkLogin" class="text-danger ml-2 d-block">* Tên đăng nhập hoặc mật khẩu chưa đúng.</small>
+        </div>
+        <div class="form-check">
+          <input formControlName="remember" class="form-check-input" type="checkbox" id="defaultCheck1">
+          <label class="form-check-label text-warning" for="defaultCheck1">
+            Nhớ mật khẩu
+          </label>
+        </div>
+        <button [disabled]="form.invalid" class="btn-animate"><a class="btn-signin text-light">Đăng nhập</a></button>
+      </form>
+    </div>
+  </div>
+</div>
+</body>
