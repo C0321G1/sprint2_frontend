@@ -1,0 +1,144 @@
+
+
+<div
+  style="background-image: url('~assets/img/38231785.jpg'); background-repeat: no-repeat;background-size: cover;max-width: 100vw">
+  <nav style="background-color: green" class="navbar navbar-expand-lg navbar-dark">
+    <a class="navbar-brand font-weight-bold text-success ml-5" href="#">
+      <img style="max-height: 50px" class="img-fluid arb-icon" src="src/assets/img/logo.png">
+    </a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent1"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse ml-3" id="navbarSupportedContent1">
+      <ul class="navbar-nav mr-auto">
+        <li class="nav-item">
+          <a class="nav-link text-white font-weight-bold" href="#">TIN TỨC</a>
+        </li>
+        <li class="nav-item active">
+          <a class="nav-link text-white font-weight-bold" href="#">CẦM ĐỒ</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link text-white font-weight-bold" href="#">THANH LÝ</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link text-white font-weight-bold" href="#">TRẢ ĐỒ</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link text-white font-weight-bold" href="#">THÔNG TIN CỬA HÀNG</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link text-white font-weight-bold" href="#">QUẢN LÝ KHÁCH HÀNG</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link text-white font-weight-bold" href="#">THÔNG TIN CÁ NHÂN</a>
+        </li>
+      </ul>
+
+      <ul class="nav navbar ml-auto">
+        <li style="border-radius: 5px" class="nav-item dropdown bg-warning">
+          <a style="border-radius: 10px" class="nav-link dropdown-toggle text-white" href="#" id="navbarDropdown"
+             role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            Nguyễn Phi Khanh
+          </a>
+          <div class="dropdown-menu bg-warning" aria-labelledby="navbarDropdown">
+            <a class="dropdown-item text-white" href="#">Đăng xuất</a>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </nav>
+  <div class="row mt-5">
+    <div class="col-md-3 " style="box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.3);">
+      <article>
+        <ul class="list ">
+          <li class="ml-5"><a href="">Tài Chính</a></li>
+          <li class="ml-5"><a href="">Danh sách cầm đồ trong kho</a></li>
+          <li class="ml-5"><a href="">10 hợp đồng mới nhất </a></li>
+          <li class="ml-5"><a href="" class="active">Thống kê lợi nhuận</a></li>
+          <li class="ml-5"><a href="">Lịch sử giao dịch</a></li>
+        </ul>
+      </article>
+    </div>
+    <div class="col-md-9 ">
+      <div class="row">
+        <div class="col-md-12">
+          <div class="container-fluid px-0">
+            <div class="container">
+              <table class="table tab-content table-bordered">
+                <tr class=" nav-statistic">
+                  <th class="text-center "><a [routerLink]="['/statistic/interest']"
+                                              style="text-decoration: none" class="a">Lợi nhuận từ tiền
+                    lãi </a></th>
+                  <th class="text-center "><a  [routerLink]="['/statistic/liquidation']"
+                                              style="text-decoration: none" class="a">Lợi nhuận từ thanh
+                    lý</a></th>
+                  <th class="text-center"><a [routerLink]="['/statistic/expected']"
+                                             style="text-decoration: none" class="a">Lợi nhuận từ dự
+                    kiến</a></th>
+                </tr>
+              </table>
+              <fieldset class="scheduler-border">
+                <legend class="scheduler-border">Bộ lọc</legend>
+
+                <div class="form-row">
+                  <div class="form-group col-md-3">
+
+                  </div>
+                  <div class="form-group col-md-3">
+                    <label style="font-size: 20px;width: 300px">Giao dịch từ ngày:</label>
+                    <input type="date" class="form-control" aria-describedby="emailHelp"
+                           placeholder="">
+                  </div>
+                  <div class="form-group col-md-3">
+                    <label class="label-text" style="font-size: 20px">Đến:</label>
+                    <input type="date" class="form-control" aria-describedby="emailHelp"
+                           placeholder="">
+                  </div>
+                  <div class="form-group col-md-3">
+
+                  </div>
+                </div>
+                <div class="form-group text-center">
+                  <button style="margin-top: 10px; color: black" class="btn btn-warning ml-3" (click)="statisticExpected()">Thống kê
+                  </button>
+                </div>
+
+                <div class="row ">
+                  <div class=" col-md-12 mt-3  text-center " >
+                    <h4 class="label-text" style="color: green"> Tổng lợi nhuận: 10897.000VND</h4>
+
+                  </div>
+                </div>
+              </fieldset>
+              <fieldset class=scheduler-border >
+                <legend class="scheduler-border">Biểu đồ</legend>
+                <div class="row table-responsive" >
+                  <div id="chart" >
+                    <apx-chart *ngIf="check"
+                               [series]="chartOptions.series"
+                               [chart]="chartOptions.chart"
+                               [yaxis]="chartOptions.yaxis"
+                               [xaxis]="chartOptions.xaxis"
+                               [labels]="chartOptions.labels"
+                               [stroke]="chartOptions.stroke"
+                               [plotOptions]="chartOptions.plotOptions"
+                               [markers]="chartOptions.markers"
+                               [fill]="chartOptions.fill"
+                               [tooltip]="chartOptions.tooltip"
+                    ></apx-chart>
+                  </div>
+                </div>
+              </fieldset>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
