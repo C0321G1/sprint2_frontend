@@ -2,9 +2,9 @@
   <fieldset class="create-contract-choose-customer">
     <legend class="create-contract-choose-customer">Chọn khách hàng</legend>
     <div>
-      <form class="form-inline mt-2">
-        <input #keyword class="form-control mr-3" style="width: 565px" type="search">
-        <button (click)="searchCustomer(0, keyword.value)" class="btn btn-warning fontButton" style="width: 120px">
+      <form [formGroup]="searchForm" (ngSubmit)="searchCustomer(0); setPage()" class="form-inline mt-2">
+        <input class="form-control mr-3" style="width: 568px" type="search" formControlName="keyword" placeholder="Nhập mã khách hàng hoặc tên khách hàng hoặc CMND/Hộ chiếu">
+        <button class="btn btn-warning fontButton" style="width: 120px">
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search"
                viewBox="0 0 16 16">
             <path
@@ -12,6 +12,10 @@
           </svg>
           <span>Tìm kiếm</span>
         </button>
+        <div class="fontError mt-1"
+             *ngIf="searchForm.controls.keyword.hasError('maxlength') &&
+                 searchForm.controls.keyword.touched">Vui lòng nhập đúng định dạng thông tin, không dài quá 50 kí tự.
+        </div>
       </form>
     </div>
     <div class="table-responsive">
@@ -51,20 +55,20 @@
     <nav class="d-flex justify-content-end">
       <ul class="pagination">
         <li class="page-item ">
-          <input min="1" max="{{totalPage}}" class="page-link " type="number"
+          <input #searchPage min="1" max="{{totalPage}}" class="page-link" type="number"
+                 (change)="goPage(searchPage.value)"
                  style="color: #28a745;width: 60px;border-color: #00b74a;margin-right:5px;border-radius:4px">
         </li>
-        <li class="page-item disabled">
-          <a class="btn btn-outline-success mr-1" href="#" tabindex="-1">Trước</a>
+        <li class="page-item">
+          <a class="btn btn-outline-success mr-1" (click)="goPreviousPage()">Trước</a>
         </li>
-        <li class="page-item"><a class="btn btn-outline-success mr-1" href="#">1</a></li>
-        <li class="page-item"><a class="btn btn-outline-success mr-1" href="#">/</a></li>
-        <li class="page-item active">
-          <a class="btn btn-outline-success mr-1" href="#">2<span
-            class="sr-only">(current)</span></a>
+        <li class="page-item"><a class="btn btn-outline-success mr-1">{{page + 1}}</a></li>
+        <li class="page-item"><a class="btn btn-outline-success mr-1">/</a></li>
+        <li class="page-item">
+          <a class="btn btn-outline-success mr-1">{{totalPage}}</a>
         </li>
         <li class="page-item">
-          <a class="btn btn-outline-success mr-1" href="#">Sau</a>
+          <a class="btn btn-outline-success mr-1" (click)="goNextPage()">Sau</a>
         </li>
       </ul>
     </nav>
