@@ -8,6 +8,7 @@ import {NgApexchartsModule} from 'ng-apexcharts';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {CommonModule} from '@angular/common';
 import {RouterModule} from '@angular/router';
+import {HttpClientModule} from '@angular/common/http';
 
 @NgModule({
   declarations: [
@@ -20,7 +21,8 @@ import {RouterModule} from '@angular/router';
     NgApexchartsModule,
     BrowserAnimationsModule,
     CommonModule,
-    RouterModule
+    RouterModule,
+    HttpClientModule
   ],
   providers: [],
   bootstrap: [AppComponent]

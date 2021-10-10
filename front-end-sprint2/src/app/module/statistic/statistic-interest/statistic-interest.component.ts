@@ -1,4 +1,4 @@
-import { Component, OnInit , ViewChild} from '@angular/core';
+import {Component, OnInit, ViewChild} from '@angular/core';
 import {
   ChartComponent,
   ApexAxisChartSeries,
@@ -11,7 +11,9 @@ import {
   ApexPlotOptions,
   ApexTitleSubtitle
 } from 'ng-apexcharts';
-import {FormControl, FormGroup, Validators} from '@angular/forms';
+import {FormControl, FormGroup, Validators, AbstractControl} from '@angular/forms';
+import {Contract} from '../../../model/contract/contract';
+import {StatisticService} from '../../../service/statistic/statistic.service';
 
 export type ChartOptions = {
   series: ApexAxisChartSeries;
@@ -25,6 +27,7 @@ export type ChartOptions = {
   fill: ApexFill;
   tooltip: ApexTooltip;
 };
+
 @Component({
   selector: 'app-statistic-interest',
   templateUrl: './statistic-interest.component.html',
@@ -35,43 +38,107 @@ export class StatisticInterestComponent implements OnInit {
   @ViewChild('chart') chart: ChartComponent;
   public chartOptions: Partial<ChartOptions>;
   check = false;
-  isCheck = 'check';
   checkStartDate = '';
   checkEndDate = '';
   checkDateForm: FormGroup;
-
-  constructor() {
+  contract: Contract[] = [];
+  isCheckStatistic = false;
+  totalMoney = 0;
+  constructor(private statisticService: StatisticService) {
     this.getEndDateStartDate();
+
   }
 
   ngOnInit(): void {
+
+
+  }
+
+  private checkDate(check: AbstractControl): any {
+    const fromDate = check.get('checkStartDate');
+    const toDate = check.get('checkEndDate');
+    return fromDate.value <= toDate.value ? null : {errorDateTo: true};
   }
 
   getEndDateStartDate() {
     this.checkDateForm = new FormGroup({
       checkStartDate: new FormControl('', Validators.required),
       checkEndDate: new FormControl('', Validators.required)
+    }, this.checkDate);
+  }
+
+   getContract() {
+    this.statisticService.getStatisticInterest(this.checkStartDate, this.checkEndDate).subscribe(value => {
+      this.contract = value;
+      for (let i = 0; i < this.contract.length; i++) {
+          // @ts-ignore
+          this.chartOptions.series[0].data.push(Number(this.contract[i].loan));
+
+      }
+
+    }, error => {
+      console.log(error);
+    });
+  }
+
+  getProfit() {
+    this.statisticService.getStatisticInterest(this.checkStartDate, this.checkEndDate).subscribe(value => {
+      this.contract = value;
+      for (let i = 0; i < this.contract.length; i++) {
+        // @ts-ignore
+        this.chartOptions.series[1].data.push(Number(this.contract[i].profit));
+      }
+
+    }, error => {
+      console.log(error);
     });
   }
 
 
-  checkStatistic() {
-    this.check = false;
+  getContractCode() {
+    this.statisticService.getStatisticInterest(this.checkStartDate, this.checkEndDate).subscribe(value => {
+      this.contract = value;
+      this.chartOptions.labels[0] =this.contract[0].contractCode;
+      for (let i = 1; i < this.contract.length; i++) {
+        this.totalMoney+=Number(this.contract[i].profit);
+        this.chartOptions.labels.push(this.contract[i].contractCode);
+        console.log(this.contract[i].contractCode);
+      }
+
+
+    }, error => {
+      console.log(error);
+    });
   }
 
+
+
+getStatistic(){
+    this.check=true;
+    this.isCheckStatistic=true;
+    if (this.isCheckStatistic){
+      this.statisticInterest();
+      this.getContractCode();
+      this.getContract();
+      this.getProfit();
+
+
+    }
+}
+
   statisticInterest() {
-    this.check = true;
+
     this.chartOptions = {
       series: [
         {
           name: 'Tổng tiền cho vay',
           type: 'column',
-          data: [1123, 11, 22, 27, 13, 22, 37, 21, 44, 22, 30]
+          data: []
         },
         {
           name: 'Tiền lãi',
           type: 'area',
-          data: [144, 55, 41, 67, 22, 43, 21, 41, 56, 27, 43]
+          data: []
         }
       ],
       chart: {
@@ -100,19 +167,14 @@ export class StatisticInterestComponent implements OnInit {
           stops: [0, 100, 100, 100]
         }
       },
-      labels: [
-        'HD-0001',
-        'HD-0002',
-        'HD-0003',
-        'HD-0004',
-        'HD-0005',
-        'HD-0006',
-        'HD-0007',
-        'HD-0008',
-        'HD-0009',
-        'HD-0010',
-        'HD-0011'
-      ],
+      xaxis: {
+        labels: {
+          trim: false
+        },
+        categories: []
+      },
+      labels: [''],
+
       markers: {
         size: 0
       },
@@ -137,21 +199,5 @@ export class StatisticInterestComponent implements OnInit {
     };
   }
 
-  public generateData(count, yrange) {
-    let i = 0;
-    const series = [];
-    while (i < count) {
-      const x = 'w' + (i + 1).toString();
-      const y =
-        Math.floor(Math.random() * (yrange.max - yrange.min + 1)) + yrange.min;
-
-      series.push({
-        x,
-        y
-      });
-      i++;
-    }
-    return series;
-  }
 
 }
