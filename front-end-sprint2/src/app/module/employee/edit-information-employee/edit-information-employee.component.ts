@@ -81,6 +81,9 @@ export class EditInformationEmployeeComponent implements OnInit {
   getForm(){
     this.employeeForm = new FormGroup({
       employeeId: new FormControl(''),
+      employeeCode: new FormControl(''),
+      flag: new FormControl(''),
+      salary: new FormControl(''),
       idCard: new FormControl('', [Validators.required, Validators.maxLength(12)]),
       name: new FormControl('', [Validators.required, Validators.maxLength(30)]),
       birthDate: new FormControl('', Validators.required),
@@ -108,6 +111,7 @@ export class EditInformationEmployeeComponent implements OnInit {
     this.employeeService.update(this.employeeForm.value).subscribe(data => {
         this.router.navigateByUrl('/');
         this.toastr.success('Cập nhật thông tin thành công!', 'Chỉnh sửa');
+
       }, error => {
         if (error.status === 400) {
           this.listError = error.error;
