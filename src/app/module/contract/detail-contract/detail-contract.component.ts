@@ -9,9 +9,16 @@ import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 export class DetailContractComponent implements OnInit {
 
   constructor(public  dialogRef: MatDialogRef<DetailContractComponent>,
-              @Inject(MAT_DIALOG_DATA) public data: any) { }
+              @Inject(MAT_DIALOG_DATA) public data: any) {
+  }
 
   ngOnInit(): void {
+  }
+
+  checkLiquidation() {
+    if (this.data.statusContract.name === 'Đang chờ thanh lý') {
+      document.getElementById('show').style.display = 'block';
+    }
   }
 
 }

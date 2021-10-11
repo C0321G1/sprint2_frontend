@@ -7,7 +7,8 @@ import { StorePageComponent } from './store-layout/store-page/store-page.compone
 import { HistoryStoreComponent } from './store-manager/history-store/history-store.component';
 import {RouterModule} from '@angular/router';
 import { ListTenContractComponent } from './store-manager/list-ten-contract/list-ten-contract.component';
-import {ReactiveFormsModule} from '@angular/forms';
+import {FormsModule, ReactiveFormsModule} from '@angular/forms';
+import {ContractModule} from '../contract/contract.module';
 
 
 @NgModule({
@@ -20,6 +21,8 @@ import {ReactiveFormsModule} from '@angular/forms';
         InformationStoreRoutingModule,
         RouterModule,
         ReactiveFormsModule,
+        FormsModule,
+        ContractModule
     ]
 })
 export class InformationStoreModule { }

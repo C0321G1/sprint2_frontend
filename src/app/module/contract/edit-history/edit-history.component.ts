@@ -1,25 +1,25 @@
-import {Component, OnInit} from '@angular/core';
-import {ContractService} from '../../../service/contract/contract.service';
-import {ToastrService} from 'ngx-toastr';
-import {ActivatedRoute, Router} from '@angular/router';
-import {Title} from '@angular/platform-browser';
+import { Component, OnInit } from '@angular/core';
 import {AbstractControl, FormControl, FormGroup, Validators} from '@angular/forms';
-import {Customer} from '../../../model/customer/customer';
+import {Contract} from '../../../model/contract/contract';
 import {StatusContract} from '../../../model/contract/status-contract';
 import {TypeContract} from '../../../model/contract/type-contract';
 import {TypeProduct} from '../../../model/contract/type-product';
-import {Contract} from '../../../model/contract/contract';
+import {Customer} from '../../../model/customer/customer';
+import {ContractService} from '../../../service/contract/contract.service';
+import {ActivatedRoute, Router} from '@angular/router';
+import {ToastrService} from 'ngx-toastr';
+import {Title} from '@angular/platform-browser';
 import {formatDate} from '@angular/common';
 import Swal from 'sweetalert2';
 import Swal2 from 'sweetalert2';
-import {Gender} from '../../../model/gender/gender';
 
 @Component({
-  selector: 'app-edit-contract',
-  templateUrl: './edit-contract.component.html',
-  styleUrls: ['./edit-contract.component.css']
+  selector: 'app-edit-history',
+  templateUrl: './edit-history.component.html',
+  styleUrls: ['./edit-history.component.css']
 })
-export class EditContractComponent implements OnInit {
+export class EditHistoryComponent implements OnInit {
+
   editForm: FormGroup;
   id: number;
   contract: Contract;
@@ -89,7 +89,7 @@ export class EditContractComponent implements OnInit {
   edit() {
     this.contract = this.editForm.value;
     this.contractService.update(this.id, this.contract).subscribe(() => {
-      this.router.navigateByUrl('/information-store/list-ten-contract').then(s => {
+      this.router.navigateByUrl('/information-store/history-store').then(s => {
         this.showSuccess();
       });
     }, e => {
@@ -126,7 +126,6 @@ export class EditContractComponent implements OnInit {
     }
     return null;
   }
-
   calculateProfit(value1: string, value2: string) {
     const loan = Number(value1);
     const today = new Date();
@@ -206,11 +205,12 @@ export class EditContractComponent implements OnInit {
       allowOutsideClick: false
     }).then((result) => {
       if (result.value) {
-        this.router.navigateByUrl('/information-store/list-ten-contract');
+        this.router.navigateByUrl('/information-store/history-store');
       } else if (result.dismiss === Swal.DismissReason.cancel) {
         this.editForm.patchValue(this.contractForm);
       }
     });
   }
+
 
 }
