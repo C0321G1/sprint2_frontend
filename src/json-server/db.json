@@ -1,0 +1,56 @@
+{
+  "sotietkiem": [
+    {
+      "makhachHang": 1,
+      "tenkhachHang": "Nhung",
+      "thoiGian": {
+        "ngayMoSo": "2020-09-11",
+        "ngayGui": "2020-08-30"
+      },
+      "kiHan": "6 tháng",
+      "soTienGui": "100000000",
+      "laiSuat": "5%",
+      "uuDai": "không có",
+      "id": 1
+    },
+    {
+      "makhachHang": 2,
+      "tenkhachHang": "An Ly",
+      "thoiGian": {
+        "ngayMoSo": "2020-09-26",
+        "ngayGui": "2020-09-08"
+      },
+      "kiHan": "5 năm",
+      "soTienGui": "10000000",
+      "laiSuat": "9%",
+      "uuDai": "không có",
+      "id": 2
+    },
+    {
+      "makhachHang": 3,
+      "tenkhachHang": "Nhung",
+      "thoiGian": {
+        "ngayMoSo": "2020-09-11",
+        "ngayGui": "2020-08-30"
+      },
+      "kiHan": "6 tháng",
+      "soTienGui": "100000000",
+      "laiSuat": "5%",
+      "uuDai": "không có",
+      "id": 3
+    },
+    {
+      "makhachHang": 4,
+      "tenkhachHang": "An Ly",
+      "thoiGian": {
+        "ngayMoSo": "2020-09-26",
+        "ngayGui": "2020-09-08"
+      },
+      "kiHan": "5 năm",
+      "soTienGui": "10000000",
+      "laiSuat": "9%",
+      "uuDai": "không có",
+      "id": 4
+    }
+  ]
+}

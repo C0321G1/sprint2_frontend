@@ -1,7 +1,11 @@
 import { Component, OnInit } from '@angular/core';
-import {TokenStorageService} from '../../../service/account/token-storage.service';
 import {Router} from '@angular/router';
-import {AuthService} from '../../../service/account/auth.service';
+import {TokenStorageService} from '../../../service/security/token-storage.service';
+import {AuthService} from '../../../service/security/auth.service';
+import Swal from 'sweetalert2';
+
+// // @ts-ignore
+// import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-header',
@@ -11,7 +15,7 @@ import {AuthService} from '../../../service/account/auth.service';
 export class HeaderComponent implements OnInit {
 
   private roles: string[];
-  isLogged = false;
+  isLoggedIn = false;
   username: string;
   showAdminBoard = false;
   showEmployeeBoard = false;
@@ -23,10 +27,30 @@ export class HeaderComponent implements OnInit {
   ngOnInit(): void {
     if (this.tokenStorageService.getToken()) {
       const user = this.tokenStorageService.getUser();
-      this.isLogged = this.authService.isLoggedIn;
+      this.isLoggedIn = !!this.tokenStorageService.getToken();
       this.roles = user.roles;
       this.username = user.username;
     }
+  }
+
+  logout() {
+    Swal.fire({
+      title: 'Bạn có muốn đăng suất ' + this.username + ' ?',
+      icon: 'info',
+      showCancelButton: true,
+      confirmButtonText: 'Đồng ý',
+      cancelButtonText: 'Hủy',
+      allowOutsideClick: false,
+      confirmButtonColor: '#DD6B55',
+      cancelButtonColor: '#768394'
+    }).then((result) => {
+      if (result.value) {
+    this.authService.logout(this.tokenStorageService.getUser().employee.employeeId).subscribe();
+    this.tokenStorageService.signOut();
+    window.location.href = 'http://localhost:4200';
+      } else if (result.dismiss === Swal.DismissReason.cancel) {
+      }
+    });
   }
 
 }
