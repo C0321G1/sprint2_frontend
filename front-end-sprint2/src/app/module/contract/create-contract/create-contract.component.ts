@@ -26,14 +26,13 @@ export class CreateContractComponent implements OnInit {
   positionDot = 0;
   msgImage = '';
   arrayFileExt: string[];
-  msgCode = '';
-  msgStartDate = '';
   msgEndDate = '';
   customerName: string;
-  profitValue: number;
+  profitValue = 0;
   selectedCustomer: Customer;
   productImage: string;
   image: string;
+  changeLoan = '';
 
   constructor(@Inject(AngularFireStorage) private storage: AngularFireStorage,
               private contractService: ContractService,
@@ -47,13 +46,12 @@ export class CreateContractComponent implements OnInit {
   ngOnInit(): void {
     this.getTypeProductList();
     this.contractForm = new FormGroup({
-      contractCode: new FormControl('', [Validators.required, Validators.pattern('^HD-\\d{4}$')]),
       customer: new FormControl(''),
       productName: new FormControl('', [Validators.required, Validators.maxLength(50)]),
       typeProduct: new FormControl('', [Validators.required]),
-      startDate: new FormControl('', [Validators.required, this.checkStartDate]),
+      startDate: new FormControl(formatDate(new Date(), 'yyyy-MM-dd', 'en-US')),
       endDate: new FormControl('', [Validators.required, this.checkEndDate]),
-      loan: new FormControl('', [Validators.required]),
+      loan: new FormControl('', [Validators.required, this.checkLoan]),
       profit: new FormControl(''),
       productImage: new FormControl('', [Validators.required])
     });
@@ -74,13 +72,13 @@ export class CreateContractComponent implements OnInit {
       // @ts-ignore
       if (data.status === false) {
         // @ts-ignore
-        this.msgCode = data.msgCode;
-        // @ts-ignore
-        this.msgStartDate = data.msgStartDate;
-        // @ts-ignore
         this.msgEndDate = data.msgEndDate;
         this.toasts.error('Tạo mới hợp đồng cầm đồ thất bại, vui lòng kiểm tra lại thông tin nhập vào.', 'Thông báo');
       } else {
+        this.ngOnInit();
+        this.customerName = '';
+        this.changeLoan = '';
+        this.profitValue = 0;
         this.toasts.success('Tạo mới hợp đồng cầm đồ thành công. Email thông báo đã được gửi đến khách hàng', 'Thông báo');
       }
     }, () => {
@@ -124,8 +122,8 @@ export class CreateContractComponent implements OnInit {
       text: 'Hành động này không thể hoàn tác !',
       icon: 'warning',
       showCancelButton: true,
-      confirmButtonText: 'Yes',
-      cancelButtonText: 'No',
+      confirmButtonText: 'Đồng ý',
+      cancelButtonText: 'Không',
       allowOutsideClick: false,
       confirmButtonColor: '#DD6B55',
       cancelButtonColor: '#768394'
@@ -133,6 +131,8 @@ export class CreateContractComponent implements OnInit {
       if (result.value) {
         this.ngOnInit();
         this.customerName = '';
+        this.changeLoan = '';
+        this.profitValue = 0;
       }
     });
   }
@@ -163,7 +163,6 @@ export class CreateContractComponent implements OnInit {
   }
 
   openChooseCustomer() {
-    // this.tempForm = this.contractForm.value;
     const dialogRef = this.matDialog.open(ChooseCustomerComponent, {
       width: '800px',
     });
@@ -176,20 +175,19 @@ export class CreateContractComponent implements OnInit {
     });
   }
 
-  checkStartDate(data: AbstractControl): any {
-    const startDate = data.value;
-    const currentDate = formatDate(new Date(), 'yyyy-MM-dd', 'en-US');
-    if (startDate !== currentDate) {
-      return {invalidStartDate: true};
-    }
-    return null;
-  }
-
   checkEndDate(data: AbstractControl): any {
     const endDate = data.value;
     const currentDate = formatDate(new Date(), 'yyyy-MM-dd', 'en-US');
     if (endDate <= currentDate) {
       return {invalidEndDate: true};
+    }
+    return null;
+  }
+
+  checkLoan(data: AbstractControl): any {
+    const loan = Number(data.value);
+    if (loan < 50000 || loan > 1000000000) {
+      return {invalidLoan: true};
     }
     return null;
   }
@@ -211,9 +209,5 @@ export class CreateContractComponent implements OnInit {
     } else {
       this.profitValue = ((12 * numOfYear + numOfMonth) * 30 + numOfDay) * loan * 0.01;
     }
-  }
-
-  resetMsgCode() {
-    this.msgCode = '';
   }
 }

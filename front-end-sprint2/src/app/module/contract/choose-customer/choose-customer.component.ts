@@ -1,9 +1,10 @@
 import {Component, Inject, OnInit} from '@angular/core';
-import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
+import {MatDialogRef} from '@angular/material/dialog';
 import {CustomerService} from '../../../service/customer/customer.service';
 import {Customer} from '../../../model/customer/customer';
 import {ToastrService} from 'ngx-toastr';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-choose-customer',
@@ -41,7 +42,20 @@ export class ChooseCustomerComponent implements OnInit {
   }
 
   closeChooseCustomer() {
-    this.dialogRef.close();
+    Swal.fire({
+      title: 'Bạn có muốn quay lại màn hình cầm đồ ?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Đồng ý',
+      cancelButtonText: 'Không',
+      allowOutsideClick: false,
+      confirmButtonColor: '#DD6B55',
+      cancelButtonColor: '#768394'
+    }).then((result) => {
+      if (result.value) {
+        this.dialogRef.close();
+      }
+    });
   }
 
   chooseCustomer(customer: Customer) {

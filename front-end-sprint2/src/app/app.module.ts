@@ -9,6 +9,9 @@ import {AngularFireModule} from '@angular/fire';
 import {environment} from '../environments/environment';
 import {HttpClientModule} from '@angular/common/http';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
+import {registerLocaleData} from '@angular/common';
+import localeVi from '@angular/common/locales/vi';
+registerLocaleData(localeVi, 'vi-VN');
 
 @NgModule({
   declarations: [
