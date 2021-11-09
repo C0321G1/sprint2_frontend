@@ -1,4 +1,4 @@
-import {Component, Inject, OnInit} from '@angular/core';
+import {Component, ElementRef, Inject, OnInit} from '@angular/core';
 import {AbstractControl, FormControl, FormGroup, Validators} from '@angular/forms';
 import {EmployeeService} from '../../../service/employee/employee.service';
 import {Router} from '@angular/router';
@@ -9,6 +9,11 @@ import {Gender} from '../../../model/gender/gender';
 import {Observable} from 'rxjs';
 import {finalize} from 'rxjs/operators';
 import {AngularFireStorage} from '@angular/fire/storage';
+// @ts-ignore
+import AutoNumeric = require('autonumeric');
+import {CurrencyPipe} from '@angular/common';
+
+
 
 @Component({
   selector: 'app-create-employee',
@@ -16,6 +21,19 @@ import {AngularFireStorage} from '@angular/fire/storage';
   styleUrls: ['./create-employee.component.css']
 })
 export class CreateEmployeeComponent implements OnInit {
+
+  constructor(private storage: AngularFireStorage,
+              private employeeService: EmployeeService,
+              private router: Router,
+              private titleService: Title,
+              private toast: ToastrService,
+              private currencyPipe: CurrencyPipe) {
+    this.titleService.setTitle('Tạo mới nhân viên');
+    // alert(this.salary.
+    // toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.'));
+  }
+
+  salary = 0;
   employeeForm: FormGroup;
   genderList: Gender[];
 
@@ -24,13 +42,11 @@ export class CreateEmployeeComponent implements OnInit {
   downloadURL: Observable<string>;
   imgSrc: string;
   check = false;
-
-  constructor(private storage: AngularFireStorage,
-              private employeeService: EmployeeService,
-              private router: Router,
-              private titleService: Title) {
-    this.titleService.setTitle('Tạo mới nhân viên');
-  }
+  checkImg = true;
+  msgExistCode = '';
+  msgExistUsername = '';
+  msgValidate: any;
+  formattedAmount: any;
 
   ngOnInit(): void {
     this.employeeService.getGenderList().subscribe(value => this.genderList = value);
@@ -41,9 +57,9 @@ export class CreateEmployeeComponent implements OnInit {
       name: new FormControl('', Validators.required),
       birthDate: new FormControl('', Validators.required),
       address: new FormControl('', Validators.required),
-      email: new FormControl('', Validators.required),
+      email: new FormControl('', [Validators.required, Validators.email]),
       image: new FormControl(''),
-      phone: new FormControl('', Validators.required),
+      phone: new FormControl('', [Validators.required, Validators.pattern('^0[0-9]{8,9}$')]),
       genderDto: new FormControl('', Validators.required),
       flag: new FormControl('0'),
       accountDto: new FormGroup({
@@ -55,11 +71,23 @@ export class CreateEmployeeComponent implements OnInit {
   }
 
   createEmployee() {
-    alert('nút tạo mới');
-    alert(this.employeeForm.value.accountDto.username);
-    alert(this.employeeForm.value.accountDto.password);
+    // alert(this.employeeForm.controls.salary.value);
     this.employeeService.save(this.employeeForm.value).subscribe(
-      value => {alert('tạo mới thành công'); }, error => alert(error));
+      value => {
+        // @ts-ignore
+        if (value.status === false) {
+          // @ts-ignore
+          this.msgExistCode = value.msgExistCode;
+          // @ts-ignore
+          this.msgExistUsername = value.msgExistUsername;
+          // @ts-ignore
+          this.msgValidate = value.msgValidate;
+          this.toast.error('Thêm mới nhân viên thất bại!');
+        } else {
+          this.toast.success('tạo mới thành công nhân viên! ' + this.employeeForm.value.name);
+          this.router.navigateByUrl('employee/list');
+        }
+      }, error => this.toast.error('Có lỗi xảy ra, vui lòng thử lại!'));
   }
 
   onFileSelected(event) {
@@ -77,6 +105,7 @@ export class CreateEmployeeComponent implements OnInit {
             if (url) {
               this.fb = url;
               this.employeeForm.patchValue({image: url});
+              this.checkImg = false;
             }
             console.log('fb la:' + this.fb);
             this.imgSrc = this.fb;
@@ -96,5 +125,15 @@ export class CreateEmployeeComponent implements OnInit {
   conparePassword(c: AbstractControl): any {
     const v = c.value;
     return v.password === v.confirmPassword ? null : {passwordnotmatch: true};
+  }
+
+
+  changeInput(input: any): any {
+    input.type = input.type === 'password' ? 'text' : 'password';
+  }
+
+  transformAmount(element) {
+    this.formattedAmount = this.currencyPipe.transform(this.formattedAmount, 'VNĐ');
+    element.target.value = this.formattedAmount;
   }
 }

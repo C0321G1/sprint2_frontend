@@ -88,3 +88,9 @@ label{
 .span-red{
   color: red;
 }
+#eye{
+  margin-left: -30px;
+  cursor: pointer;
+}
+.salary::before { content:'$'; }
+

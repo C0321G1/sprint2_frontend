@@ -8,6 +8,7 @@ import {Gender} from '../../../model/gender/gender';
 import {Observable} from 'rxjs';
 import {finalize} from 'rxjs/operators';
 import {Employee} from '../../../model/employee/employee';
+import {ToastrService} from 'ngx-toastr';
 
 @Component({
   selector: 'app-edit-employee',
@@ -35,9 +36,9 @@ export class EditEmployeeComponent implements OnInit {
     name: new FormControl('', Validators.required),
     birthDate: new FormControl('', Validators.required),
     address: new FormControl('', Validators.required),
-    email: new FormControl('', Validators.required),
+    email: new FormControl('', [Validators.required, Validators.email]),
     image: new FormControl(''),
-    phone: new FormControl('', Validators.required),
+    phone: new FormControl('', [Validators.required, Validators.pattern('^0[0-9]{8,9}$')]),
     genderDto: new FormControl('', Validators.required),
     flag: new FormControl('0'),
     accountDto: new FormGroup({
@@ -47,32 +48,39 @@ export class EditEmployeeComponent implements OnInit {
       confirmPassword: new FormControl('', [Validators.required, Validators.minLength(6)])
     }, this.conparePassword)
   });
+  salary = 0;
 
   constructor(private storage: AngularFireStorage,
               private employeeService: EmployeeService,
               private router: Router,
               private titleService: Title,
               private activatedRoute: ActivatedRoute,
+              private toast: ToastrService
   ) {
     this.titleService.setTitle('Cập nhật nhân viên');
     this.id = Number(this.activatedRoute.snapshot.params.id);
     this.employeeService.getGenderList().subscribe(value => {
-      this.genderList = value;
-    });
+        this.genderList = value;
+      },
+      error => alert('loi get list gender'));
   }
 
   ngOnInit(): void {
+    this.getEmployee();
+  }
+
+  getEmployee(): void {
     this.employeeService.findById(this.id).subscribe(value => {
       this.employee = value;
       this.employeeForm.patchValue(value);
       this.employeeForm.controls.accountDto.get('accountId').setValue(value.account.accountId);
       this.employeeForm.controls.accountDto.get('username').setValue(value.account.username);
-      this.employeeForm.controls.accountDto.get('password').setValue(value.account.password);
-      this.employeeForm.controls.accountDto.get('confirmPassword').setValue(value.account.password);
+      // this.employeeForm.controls.accountDto.get('password').setValue(value.account.password);
+      // this.employeeForm.controls.accountDto.get('confirmPassword').setValue(value.account.password);
+      this.employeeForm.controls.genderDto.setValue(value.gender);
       this.gender = value.gender;
-      this.employeeForm.controls.genderDto.setValue(this.gender);
       this.imgSrc = value.image;
-    }, error => alert('loi'));
+    }, error => this.toast.error('không tìm thấy nhân viên!'));
   }
 
   conparePassword(c: AbstractControl): any {
@@ -83,8 +91,9 @@ export class EditEmployeeComponent implements OnInit {
   editEmployee() {
     this.employeeService.update(this.employeeForm.value).subscribe(
       value => {
-        alert('cập nhật thành công');
-      }, error => alert(error));
+        this.toast.success('cập nhật thành công nhân viên! ' + this.employeeForm.value.name);
+        this.router.navigateByUrl('employee/list');
+      }, error => this.toast.error('có lỗi xảy ra!'));
   }
 
   onFileSelected(event) {
@@ -116,5 +125,9 @@ export class EditEmployeeComponent implements OnInit {
           console.log(url);
         }
       });
+  }
+
+  changeInput(input: any): any {
+    input.type = input.type === 'password' ? 'text' : 'password';
   }
 }
